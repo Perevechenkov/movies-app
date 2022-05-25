@@ -13,7 +13,9 @@ function App() {
     setError(null);
 
     try {
-      const responce = await fetch('https://swapi.dev/api/films/');
+      const responce = await fetch(
+        'https://movies-dummy-db-default-rtdb.europe-west1.firebasedatabase.app/movies.json'
+      );
 
       if (!responce.ok) {
         throw new Error(responce.statusText);
@@ -21,16 +23,18 @@ function App() {
 
       const movies = await responce.json();
 
-      const transformedMovies = movies.results.map(movie => {
-        return {
-          id: movie.episode_id,
-          title: movie.title,
-          openingText: movie.opening_crawl,
-          releaseDate: movie.release_date,
-        };
-      });
+      const loadedMovies = [];
 
-      setMovies(transformedMovies);
+      for (const key in movies) {
+        loadedMovies.push({
+          id: key,
+          title: movies[key].title,
+          openingText: movies[key].openingText,
+          releaseDate: movies[key].releaseDate,
+        });
+      }
+
+      setMovies(loadedMovies);
     } catch (error) {
       setError(error.message);
     }
@@ -41,8 +45,19 @@ function App() {
     fetchMoviesHandler();
   }, [fetchMoviesHandler]);
 
-  const addMovieHandler = movie => {
-    console.log(movie);
+  const addMovieHandler = async movie => {
+    const responce = await fetch(
+      'https://movies-dummy-db-default-rtdb.europe-west1.firebasedatabase.app/movies.json',
+      {
+        method: 'POST',
+        body: JSON.stringify(movie),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    const data = await responce.json();
   };
 
   let content = <p>Found no movies</p>;
