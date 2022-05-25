@@ -4,8 +4,10 @@ import MoviesList from './components/MoviesList';
 
 function App() {
   const [movies, setMovies] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchMoviesHandler = async () => {
+    setIsLoading(true);
     const responce = await fetch('https://swapi.dev/api/films/');
 
     if (responce.ok) {
@@ -20,6 +22,7 @@ function App() {
         };
       });
 
+      setIsLoading(false);
       setMovies(transformedMovies);
     }
   };
@@ -30,7 +33,9 @@ function App() {
         <button onClick={fetchMoviesHandler}>Fetch Movies</button>
       </section>
       <section>
-        <MoviesList movies={movies} />
+        {!isLoading && movies.length > 0 && <MoviesList movies={movies} />}
+        {!isLoading && movies.length === 0 && <p>No movies</p>}
+        {isLoading && <p>Loading...</p>}
       </section>
     </>
   );
