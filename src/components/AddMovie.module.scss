@@ -1,0 +1,32 @@
+@use "../abstracts/variables" as *;
+
+.control {
+     margin: 1rem 0;
+
+     label {
+          margin-bottom: 0.5rem;
+
+          display: block;
+
+          text-align: left;
+          font-weight: bold;
+     }
+
+     input,
+     textarea {
+          width: 100%;
+          max-width: 100%;
+          padding: 0.2rem;
+
+          border: 1px solid $border-dark-opace;
+          border-radius: 12px;
+
+          font: inherit;
+
+          &:focus {
+               border-color: $border-dark;
+
+               outline: none;
+          }
+     }
+}
