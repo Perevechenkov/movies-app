@@ -1,44 +1,33 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import NewTask from './components/NewTask/NewTask';
 import Tasks from './components/Tasks/Tasks';
+import useHttp from './hooks/use-http';
 
 function App() {
   const [tasks, setTasks] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
 
-  const fetchMoviesHandler = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
+  const { isLoading, error, sendRequest: fetchTasks } = useHttp();
 
-    try {
-      const responce = await fetch(
-        'https://movies-dummy-db-default-rtdb.europe-west1.firebasedatabase.app/tasks.json'
-      );
-
-      if (!responce.ok) {
-        throw new Error(responce.statusText);
-      }
-
-      const tasks = await responce.json();
-
+  useEffect(() => {
+    const transformTasks = tasksObj => {
       const loadedTasks = [];
 
-      for (const taskKey in tasks) {
-        loadedTasks.push({ id: taskKey, text: tasks[taskKey].text });
+      for (const taskKey in tasksObj) {
+        loadedTasks.push({ id: taskKey, text: tasksObj[taskKey].text });
       }
 
       setTasks(loadedTasks);
-    } catch (error) {
-      setError(error.message);
-    }
-    setIsLoading(false);
-  }, []);
+    };
 
-  useEffect(() => {
-    fetchMoviesHandler();
-  }, [fetchMoviesHandler]);
+    fetchTasks(
+      {
+        url: 'https://movies-dummy-db-default-rtdb.europe-west1.firebasedatabase.app/tasks.json',
+        headers: {},
+      },
+      transformTasks
+    );
+  }, [fetchTasks]);
 
   const addTaskHandler = async task => {
     setTasks(prevTasks => prevTasks.concat(task));
@@ -51,7 +40,7 @@ function App() {
         items={tasks}
         loading={isLoading}
         error={error}
-        onFetch={fetchMoviesHandler}
+        onFetch={fetchTasks}
       />
     </>
   );
