@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
-import './App.scss';
-import AddMovie from './components/AddMovie';
-import MoviesList from './components/MoviesList';
+
+import NewTask from './components/NewTask/NewTask';
+import Tasks from './components/Tasks/Tasks';
 
 function App() {
-  const [movies, setMovies] = useState([]);
+  const [tasks, setTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -14,27 +14,22 @@ function App() {
 
     try {
       const responce = await fetch(
-        'https://movies-dummy-db-default-rtdb.europe-west1.firebasedatabase.app/movies.json'
+        'https://movies-dummy-db-default-rtdb.europe-west1.firebasedatabase.app/tasks.json'
       );
 
       if (!responce.ok) {
         throw new Error(responce.statusText);
       }
 
-      const movies = await responce.json();
+      const tasks = await responce.json();
 
-      const loadedMovies = [];
+      const loadedTasks = [];
 
-      for (const key in movies) {
-        loadedMovies.push({
-          id: key,
-          title: movies[key].title,
-          openingText: movies[key].openingText,
-          releaseDate: movies[key].releaseDate,
-        });
+      for (const taskKey in tasks) {
+        loadedTasks.push({ id: taskKey, text: tasks[taskKey].text });
       }
 
-      setMovies(loadedMovies);
+      setTasks(loadedTasks);
     } catch (error) {
       setError(error.message);
     }
@@ -45,44 +40,19 @@ function App() {
     fetchMoviesHandler();
   }, [fetchMoviesHandler]);
 
-  const addMovieHandler = async movie => {
-    const responce = await fetch(
-      'https://movies-dummy-db-default-rtdb.europe-west1.firebasedatabase.app/movies.json',
-      {
-        method: 'POST',
-        body: JSON.stringify(movie),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-
-    const data = await responce.json();
+  const addTaskHandler = async task => {
+    setTasks(prevTasks => prevTasks.concat(task));
   };
-
-  let content = <p>Found no movies</p>;
-
-  if (movies.length > 0) {
-    content = <MoviesList movies={movies} />;
-  }
-
-  if (error) {
-    content = <p>{error}</p>;
-  }
-
-  if (isLoading) {
-    content = <p>Loading...</p>;
-  }
 
   return (
     <>
-      <section>
-        <AddMovie onAddMovie={addMovieHandler} />
-      </section>
-      <section>
-        <button onClick={fetchMoviesHandler}>Fetch Movies</button>
-      </section>
-      <section>{content}</section>
+      <NewTask onAddTask={addTaskHandler} />
+      <Tasks
+        items={tasks}
+        loading={isLoading}
+        error={error}
+        onFetch={fetchMoviesHandler}
+      />
     </>
   );
 }
