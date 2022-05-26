@@ -22,22 +22,4 @@
                outline: none;
           }
      }
-
-     button {
-          padding: 0.75rem 2rem;
-
-          border: 1px solid $bg-primary-blue;
-          border-radius: 20px;
-
-          background-color: $bg-primary-blue;
-          color: $text-color;
-          font: inherit;
-          cursor: pointer;
-
-          &:hover,
-          &:active {
-               border-color: $bg-primary-blue-hover;
-               background-color: $bg-primary-blue-hover;
-          }
-     }
 }

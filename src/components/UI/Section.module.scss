@@ -10,4 +10,22 @@
      box-shadow: 0 2px 8px $border-dark-opace;
 
      background-color: $bg-primary-light;
+
+     button {
+          padding: 0.75rem 2rem;
+
+          border: 1px solid $bg-primary-blue;
+          border-radius: 20px;
+
+          background-color: $bg-primary-blue;
+          color: $text-color;
+          font: inherit;
+          cursor: pointer;
+
+          &:hover,
+          &:active {
+               border-color: $bg-primary-blue-hover;
+               background-color: $bg-primary-blue-hover;
+          }
+     }
 }
